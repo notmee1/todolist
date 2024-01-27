@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #myInput {
+        width: 20%;
+      }
+      #myUL li {
+        cursor: pointer;
+        margin: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>App Todo List @notmee1 on Github (Vũ Thành An)</h2>
+    <input type="text" id="myInput" placeholder="Tác vụ mới...">
+    <button onclick="newElement()">Add</button>
+
+    <ul id="myUL"></ul>
+
+    <script>
+      function newElement() {
+        const inputValue = document.getElementById("myInput").value;
+
+        if (inputValue === '') {
+          alert("You must write something!");
+        } else {
+          createNewTask(inputValue);
+          saveToLocalStorage(inputValue);
+        }
+        document.getElementById("myInput").value = "";
+      }
+
+      function createNewTask(task) {
+        let li = document.createElement("li");
+        let textNode = document.createTextNode(task);
+        li.appendChild(textNode);
+        document.getElementById("myUL").appendChild(li);
+
+        let span = document.createElement("SPAN");
+        let text = document.createTextNode(" Delete");
+        span.className = "close";
+        span.appendChild(text);
+        li.appendChild(span);
+
+        span.onclick = function() {
+          let div = this.parentElement;
+          div.style.display = "none";
+          removeFromLocalStorage(task);
+        }
+      }
+
+      function saveToLocalStorage(task) {
+        let tasks;
+        if(localStorage.getItem('tasks') === null) {
+          tasks = [];
+        } else {
+          tasks = JSON.parse(localStorage.getItem('tasks'));
+        }
+        tasks.push(task);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+      }
+
+      function removeFromLocalStorage(taskToRemove) {
+        let tasks = JSON.parse(localStorage.getItem('tasks'));
+        const index = tasks.indexOf(taskToRemove);
+        if (index !== -1) {
+          tasks.splice(index, 1);
+          localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+      }
+
+      function getTasks() {
+        let tasks;
+        if(localStorage.getItem('tasks') === null) {
+          tasks = [];
+        } else {
+          tasks = JSON.parse(localStorage.getItem('tasks'));
+        }
+        tasks.forEach(task => {
+          createNewTask(task);
+        });
+      }
+
+      document.onload = getTasks();
+    </script>
+  </body>
+</html>
